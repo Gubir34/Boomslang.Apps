@@ -2,7 +2,7 @@
     "$version": "1",
 
     "name": "OctoApp companion",
-    "description": "Companion for the OctoApp mobile application",
+    "description": "Companion for the OctoApp Android app: control and watch your printer from your phone, with live webcam, temperatures, gcode viewer and progress, plus print notifications that reach you even when you are away from home. After enabling the app, add the printer in OctoApp using Moonraker (port 7125); this companion then sends the notifications. It talks to Moonraker locally and doesn't change any printer settings. Needs about 20 MB of free memory, so enable it only if you use OctoApp.",
     "version": "3.2.4",
 
     "upstream": {

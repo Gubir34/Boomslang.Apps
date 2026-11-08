@@ -2,7 +2,7 @@
     "$version": "1",
 
     "name": "Cloud to LAN bridge",
-    "description": "Enable most Cloud features to still work even when LAN mode is enabled. This app will bridge all Cloud messages to the LAN, enabling control from Anycubic apps in LAN mode. Turn LAN mode on from this app's settings, then reboot the printer: the touchscreen's LAN toggle removes the printer from your Anycubic account",
+    "description": "Keeps the Anycubic cloud features working while your printer is in LAN mode. LAN mode is what lets OrcaSlicer, Mainsail and Fluidd start prints on the printer and pick the right ACE slot, but normally it cuts the printer off from Anycubic's cloud. This bridge talks to the cloud for the printer, so the Anycubic app can still see the printer, show the camera and get notifications. Bind the printer to your Anycubic account in cloud mode first, then turn on LAN mode in this app's settings and reboot. Don't use the touchscreen's own LAN toggle on recent firmware: it unbinds the printer from your account. Streaming the camera to the cloud uses extra memory and CPU while the Anycubic app is watching.",
     "version": "1.2",
 
     "properties": {

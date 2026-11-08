@@ -1,0 +1,25 @@
+{
+    "$version": "1",
+
+    "name": "System monitor",
+    "description": "Shows what the printer's small computer is doing, so you can see why the screen or the web interfaces feel slow, or check that an app is not eating all the memory. A web page with live graphs of CPU use, free memory, load, chip temperature, storage and the nozzle and bed temperatures over the last hour, 6 hours or 12 hours, plus a table of the programs using the most memory and CPU right now. It samples every 10 seconds and keeps 12 hours of history in memory (a few hundred KB), which is cleared when the printer restarts. Open http://<printer-ip>:8092 or scan the QR code below. Reading the numbers costs almost nothing; the page only loads when you open it.",
+    "version": "1.0.0",
+
+    "requirements": {
+        "cpu": 0,
+        "memory": 2
+    },
+
+    "properties": {
+        "open_link": {
+            "display": "Open on your phone",
+            "type": "qr"
+        },
+        "port": {
+            "display": "Web port",
+            "type": "number",
+            "default": "8092",
+            "advanced": true
+        }
+    }
+}

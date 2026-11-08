@@ -2,7 +2,7 @@
     "$version": "1",
 
     "name": "Tailscale",
-    "description": "Secure, private network connectivity using Tailscale VPN",
+    "description": "Puts your printer on your private Tailscale network, so you can open Mainsail, Fluidd, the web portal and SSH from your phone or laptop anywhere, as if you were at home, without opening any ports. Traffic is end-to-end encrypted with WireGuard. After enabling the app, open its settings and use the login QR code or link to add the printer to your Tailscale account; you can then set its hostname, turn on Tailscale SSH, accept DNS from your tailnet or offer the printer as an exit node. The free personal plan is enough. Needs about 20 MB of free memory.",
     "version": "1.104.4",
     "depends": [],
 

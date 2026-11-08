@@ -2,7 +2,7 @@
     "$version": "1",
 
     "name": "Cloudflare Tunnel",
-    "description": "Manages Cloudflare tunnels for remote access to the printer",
+    "description": "Reach Mainsail, Fluidd and the Boomslang web portal from anywhere through a Cloudflare Tunnel, without opening ports on your router or exposing the printer directly to the internet. The printer makes an outgoing, encrypted connection to Cloudflare, and Cloudflare serves your printer under a hostname of your own, optionally behind Cloudflare Access login. You need a free Cloudflare account and a tunnel token: create the tunnel in the Cloudflare Zero Trust dashboard, then put the token in config/token.txt in this app's folder (see the README) and enable the app. Needs about 10 MB of free memory.",
     "version": "2026.10.7",
     "depends": [],
 

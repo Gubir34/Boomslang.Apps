@@ -1,0 +1,98 @@
+{
+    "$version": "1",
+
+    "name": "Print notifications",
+    "description": "Sends a notification to your phone when a print starts, pauses, finishes, fails or is cancelled, and optionally every few percent of progress. Messages include the file name, how long the print took and the error message if something went wrong. Works with ntfy (free, no account needed: install the ntfy app and subscribe to the topic you set here), Telegram (create a bot with @BotFather and enter its token and your chat ID), Discord (paste a channel webhook URL) or any web service that accepts a JSON POST. It only reads the print state from Moonraker on the printer every few seconds and never changes printer settings. Runs as a small shell script, so it needs almost no memory.",
+    "version": "1.0.0",
+
+    "requirements": {
+        "cpu": 0,
+        "memory": 1
+    },
+
+    "properties": {
+        "status": {
+            "display": "Status",
+            "type": "report"
+        },
+        "service": {
+            "display": "Send notifications with",
+            "type": "enum",
+            "options": [ "ntfy", "telegram", "discord", "webhook" ],
+            "default": "ntfy"
+        },
+        "ntfy_topic": {
+            "display": "ntfy topic",
+            "type": "text",
+            "default": ""
+        },
+        "ntfy_server": {
+            "display": "ntfy server",
+            "type": "text",
+            "default": "https://ntfy.sh",
+            "advanced": true
+        },
+        "telegram_bot_token": {
+            "display": "Telegram bot token",
+            "type": "text",
+            "default": ""
+        },
+        "telegram_chat_id": {
+            "display": "Telegram chat ID",
+            "type": "text",
+            "default": ""
+        },
+        "discord_webhook_url": {
+            "display": "Discord webhook URL",
+            "type": "text",
+            "default": ""
+        },
+        "webhook_url": {
+            "display": "Webhook URL (JSON POST)",
+            "type": "text",
+            "default": ""
+        },
+        "on_start": {
+            "display": "Notify when a print starts",
+            "type": "enum",
+            "options": [ "False", "True" ],
+            "default": "True"
+        },
+        "on_complete": {
+            "display": "Notify when a print finishes",
+            "type": "enum",
+            "options": [ "False", "True" ],
+            "default": "True"
+        },
+        "on_pause": {
+            "display": "Notify when a print pauses or resumes",
+            "type": "enum",
+            "options": [ "False", "True" ],
+            "default": "True"
+        },
+        "on_error": {
+            "display": "Notify on errors and cancels",
+            "type": "enum",
+            "options": [ "False", "True" ],
+            "default": "True"
+        },
+        "progress_step": {
+            "display": "Progress update every N % (0 = off)",
+            "type": "number",
+            "default": "0"
+        },
+        "printer_name": {
+            "display": "Printer name in messages",
+            "type": "text",
+            "default": "Kobra",
+            "advanced": true
+        },
+        "test_on_start": {
+            "display": "Send a test message when the app starts",
+            "type": "enum",
+            "options": [ "False", "True" ],
+            "default": "True",
+            "advanced": true
+        }
+    }
+}

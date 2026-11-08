@@ -1,0 +1,53 @@
+{
+    "$version": "1",
+
+    "name": "Automatic backup",
+    "description": "Backs up your printer's configuration on a schedule, so a factory reset, a failed firmware update or a mistake in printer.custom.cfg is easy to undo. Each backup is a small .tar.gz file with printer.custom.cfg, the stock printer and bed mesh settings (printer_mutable.cfg), Moonraker and Boomslang settings, your app settings and, optionally, the Moonraker database with print history and Spoolman spool assignments. Backups go to a USB drive plugged into the printer (in a boomslang-backups folder) or to any folder you choose, for example a NAS share mounted with the NFS Mount app. The oldest backups are deleted once there are more than you want to keep. No backup is taken while printing; it waits until the print is done. The web portal password is never included. Uses no memory between backups.",
+    "version": "1.0.0",
+
+    "requirements": {
+        "cpu": 0,
+        "memory": 1
+    },
+
+    "properties": {
+        "status": {
+            "display": "Last backup",
+            "type": "report"
+        },
+        "destination": {
+            "display": "Save backups to",
+            "type": "enum",
+            "options": [ "usb", "folder" ],
+            "default": "usb"
+        },
+        "folder": {
+            "display": "Backup folder (when saving to a folder)",
+            "type": "text",
+            "default": "/useremain/boomslang-backups"
+        },
+        "interval_hours": {
+            "display": "Back up every N hours",
+            "type": "number",
+            "default": "24"
+        },
+        "keep": {
+            "display": "Number of backups to keep",
+            "type": "number",
+            "default": "10"
+        },
+        "include_database": {
+            "display": "Include print history and Spoolman assignments",
+            "type": "enum",
+            "options": [ "False", "True" ],
+            "default": "True"
+        },
+        "backup_on_start": {
+            "display": "Back up a few minutes after the printer starts",
+            "type": "enum",
+            "options": [ "False", "True" ],
+            "default": "True",
+            "advanced": true
+        }
+    }
+}

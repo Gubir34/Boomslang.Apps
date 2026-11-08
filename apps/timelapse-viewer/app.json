@@ -1,0 +1,31 @@
+{
+    "$version": "1",
+
+    "name": "Timelapse viewer",
+    "description": "Watch, download and share the timelapse videos your printer records, from any browser on your phone or computer. The Kobra saves a timelapse of each print when timelapse is turned on in the print settings, but the only way to get the videos off the printer used to be the Anycubic app or a USB drive. This app lists them newest first with the date and size, plays them right in the browser (seeking works, so long prints are fine) and lets you download them in one tap. Deleting videos from the page can be turned on in the settings to free up space. Open http://<printer-ip>:8091 or scan the QR code below. Runs a tiny web server (lighttpd) only while the app is enabled.",
+    "version": "1.0.0",
+
+    "requirements": {
+        "cpu": 0,
+        "memory": 2
+    },
+
+    "properties": {
+        "open_link": {
+            "display": "Open on your phone",
+            "type": "qr"
+        },
+        "allow_delete": {
+            "display": "Allow deleting videos from the page",
+            "type": "enum",
+            "options": [ "False", "True" ],
+            "default": "False"
+        },
+        "port": {
+            "display": "Web port",
+            "type": "number",
+            "default": "8091",
+            "advanced": true
+        }
+    }
+}

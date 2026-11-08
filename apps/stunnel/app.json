@@ -2,6 +2,6 @@
     "$version": "1",
 
     "name": "TLS add-on for other services",
-    "description": "Adds TLS for existing services with self-signed SSL certificates.",
+    "description": "Adds HTTPS versions of the printer's web services, so Mainsail, Fluidd, Moonraker and the Boomslang web portal can be used over an encrypted connection, for example when you reach the printer through a reverse proxy or want to keep your web portal password off the network in plain text. Certificates are self-signed and created on the printer the first time the app starts, so your browser will show a warning the first time: check the details and accept the certificate if you trust your network. See stunnel.conf in the app folder for which HTTPS port maps to which service.",
     "version": "1.0.0"
 }

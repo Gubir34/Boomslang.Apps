@@ -1,11 +1,31 @@
-This repository contains apps for [Rinkhals](https://github.com/rinkhals-community/Rinkhals), a custom firmware for the Anycubic Kobra 3 3D printer.
+# Boomslang app store
 
-Rinkhals allows side-loading custom apps to add more features to the printer.
-Feel free to use install them, use them and add more apps to this repository, PR are welcome!
+Apps for [Boomslang](https://github.com/Gubir34/Boomslang), a fork of the [Rinkhals](https://github.com/rinkhals-community/Rinkhals) custom firmware for Anycubic Kobra printers. This repository is a fork of [rinkhals-community/Rinkhals.Apps](https://github.com/rinkhals-community/Rinkhals.Apps) with extra apps and longer descriptions; apps from here also run on Rinkhals.
+
+Boomslang's App Store, on the printer screen and in the web portal, installs apps straight from this repository's latest release.
+
+| App | Folder | What it does |
+| -- | -- | -- |
+| **Automatic backup** | `auto-backup` | Backs up your printer's configuration on a schedule, so a factory reset, a failed firmware update or a mistake in printer.custom.cfg is easy to undo. |
+| **Boomslang Hop** | `boomslang-hop` | A small one-button game for the waiting time while a print runs. |
+| **Cloud to LAN bridge** | `cloud2lan-bridge` | Keeps the Anycubic cloud features working while your printer is in LAN mode. |
+| **Cloudflare Tunnel** | `cloudflare-tunnel` | Reach Mainsail, Fluidd and the Boomslang web portal from anywhere through a Cloudflare Tunnel, without opening ports on your router or exposing the printer directly to the internet. |
+| **Discovery helper** | `discovery-helper` | Fixes Anycubic Slicer Next not finding the printer in LAN mode on some networks. |
+| **NFS Mount** | `nfs-mount` | Stores your gcode files on a NAS or another computer instead of the printer's small internal storage. |
+| **OctoApp companion** | `octoapp` | Companion for the OctoApp Android app: control and watch your printer from your phone, with live webcam, temperatures, gcode viewer and progress, plus print notifications that reach you even when you are away from home. |
+| **OctoEverywhere** | `octoeverywhere` | Free remote access to Mainsail and Fluidd from anywhere through OctoEverywhere, with AI print failure detection (Gadget), print notifications to your phone, Discord, Telegram and others, live webcam streaming and sharing, and support for the OctoEverywhere and Klipper mobile apps. |
+| **Print notifications** | `print-notifications` | Sends a notification to your phone when a print starts, pauses, finishes, fails or is cancelled, and optionally every few percent of progress. |
+| **Quick links** | `quick-links` | Puts QR codes for all of the printer's web pages in one place, so you never have to type an IP address on your phone again. |
+| **TLS add-on for other services** | `stunnel` | Adds HTTPS versions of the printer's web services, so Mainsail, Fluidd, Moonraker and the Boomslang web portal can be used over an encrypted connection, for example when you reach the printer through a reverse proxy or want to keep your web portal password off the network in plain text. |
+| **System monitor** | `system-monitor` | Shows what the printer's small computer is doing, so you can see why the screen or the web interfaces feel slow, or check that an app is not eating all the memory. |
+| **Tailscale** | `tailscale` | Puts your printer on your private Tailscale network, so you can open Mainsail, Fluidd, the web portal and SSH from your phone or laptop anywhere, as if you were at home, without opening any ports. |
+| **Timelapse viewer** | `timelapse-viewer` | Watch, download and share the timelapse videos your printer records, from any browser on your phone or computer. |
+
+New in Boomslang: Print notifications, Automatic backup, Timelapse viewer, System monitor, Boomslang Hop and Quick links.
 
 
 <p align="center">
-    <img width="48" src="https://github.com/rinkhals-community/Rinkhals/blob/master/icon.png?raw=true" />
+    <img width="48" src="https://github.com/Gubir34/Boomslang/blob/master/icon.png?raw=true" />
 </p>
 
 
@@ -15,7 +35,7 @@ There are 2 options to install Rinkhals apps on your printer. You will obviously
 
 ### Using SWU packages
 
-You can use the SWU packages provided in the releases page: https://github.com/rinkhals-community/Rinkhals.Apps/releases
+You can use the SWU packages provided in the releases page: https://github.com/Gubir34/Boomslang.Apps/releases
 
 You can download the SWU file for the app you want and the printer you have, copy it as **update.swu** on a FAT32 USB drive in a **aGVscF9zb3Nf** directory, plug the USB drive in the Kobra and it just works. You will ear two beeps, the second one will tell you that the app is installed. There is no need to reboot afterwards.
 
@@ -28,7 +48,7 @@ You can connect to SSH / SFTP and copy the app directory in **/useremain/home/ri
 
 
 <p align="center">
-    <img width="48" src="https://github.com/rinkhals-community/Rinkhals/blob/master/icon.png?raw=true" />
+    <img width="48" src="https://github.com/Gubir34/Boomslang/blob/master/icon.png?raw=true" />
 </p>
 
 
@@ -93,7 +113,7 @@ docker run --rm -it -v .\build:/build -v .\files:/files -v .\apps:/apps ghcr.io/
 
 
 <p align="center">
-    <img width="48" src="https://github.com/rinkhals-community/Rinkhals/blob/master/icon.png?raw=true" />
+    <img width="48" src="https://github.com/Gubir34/Boomslang/blob/master/icon.png?raw=true" />
 </p>
 
 

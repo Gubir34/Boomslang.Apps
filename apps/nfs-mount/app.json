@@ -2,7 +2,7 @@
     "$version": "1",
 
     "name": "NFS Mount",
-    "description": "Replace local gcode storage with NFS to offload I/O",
+    "description": "Stores your gcode files on a NAS or another computer instead of the printer's small internal storage. The share from your NFS server replaces the printer's gcode folders, so uploads from the slicer, Mainsail and the touchscreen all land on the NAS, files take no space on the printer and its flash storage sees fewer writes. Set the NFS server address, port (2049 by default) and share path in the app settings; until both are set the app leaves local storage untouched. It mounts in the background and keeps retrying until the server is reachable, so a slow network at boot is fine. Stopping the app restores the local folders.",
     "version": "0.2",
 
     "properties": {

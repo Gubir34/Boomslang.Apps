@@ -2,7 +2,7 @@
     "$version": "1",
 
     "name": "Discovery helper",
-    "description": "Improves LAN mode discovery of the printer in Anycubic Slicer Next",
+    "description": "Fixes Anycubic Slicer Next not finding the printer in LAN mode on some networks. Routers and switches with IGMP snooping only forward multicast discovery messages to devices that joined the multicast group, and the printer never joins it, so the slicer's search never reaches it even though everything else works. When this app starts it joins the printer to the SSDP group so the next discovery from the slicer gets through. Connect from the slicer soon after starting it, since the membership can expire; once the printer is added and its IP address stays the same, you no longer need the app. Uses almost no memory.",
     "version": "1.0",
     "depends": [],
 

@@ -1,0 +1,25 @@
+{
+    "$version": "1",
+
+    "name": "Boomslang Hop",
+    "description": "A small one-button game for the waiting time while a print runs. Boomslang races along a jungle branch: tap, click or press Space to hop over thorn bushes and gaps, jump again in mid-air to clear fallen logs, time your jumps around the circling hawks and snack on beetles for bonus points. It keeps getting faster, plays its own little soundtrack (turn it off with the music button or M) and remembers your best score. Play it in any browser on your phone or computer at http://<printer-ip>:8093, or scan the QR code below. It is a static page served by a tiny web server; the game itself runs in your browser, not on the printer.",
+    "version": "1.0.0",
+
+    "requirements": {
+        "cpu": 0,
+        "memory": 2
+    },
+
+    "properties": {
+        "open_link": {
+            "display": "Play on your phone",
+            "type": "qr"
+        },
+        "port": {
+            "display": "Web port",
+            "type": "number",
+            "default": "8093",
+            "advanced": true
+        }
+    }
+}

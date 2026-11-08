@@ -2,7 +2,7 @@
     "$version": "1",
 
     "name": "OctoEverywhere",
-    "description": "A maker community project that enables free remote access, AI failure detection, print notifications, live streaming and more.",
+    "description": "Free remote access to Mainsail and Fluidd from anywhere through OctoEverywhere, with AI print failure detection (Gadget), print notifications to your phone, Discord, Telegram and others, live webcam streaming and sharing, and support for the OctoEverywhere and Klipper mobile apps. No port forwarding or VPN is needed. After enabling the app, open its settings and scan the QR code (or open the link) to connect the printer to your OctoEverywhere account. The printer's clock must be set for the secure connection; Boomslang syncs it at startup. Needs about 20 MB of free memory.",
     "version": "5.4.1",
 
     "upstream": {

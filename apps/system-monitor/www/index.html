@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>System monitor - Boomslang</title>
+<link rel="icon" href="logo.svg">
+<style>
+  :root { --bg:#0f1115; --card:#181b22; --line:#262b35; --grid:#20242c; --ink:#e8eaed; --muted:#9aa3ae; --brand:#4fb548;
+          --c1:#4fb548; --c2:#e9a23b; --c3:#5aa9e6; --c4:#e5484d; --c5:#b48ef0; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background:var(--bg); color:var(--ink); }
+  header { display:flex; align-items:center; gap:12px; padding:16px 20px; border-bottom:1px solid var(--line); flex-wrap:wrap; }
+  header img { width:40px; height:40px; }
+  header h1 { font-size:20px; margin:0; }
+  header .sub { color:var(--muted); font-size:13px; }
+  .ranges { margin-left:auto; display:flex; gap:4px; background:var(--card); border:1px solid var(--line); border-radius:8px; padding:3px; }
+  .ranges button { border:0; background:none; color:var(--muted); padding:6px 12px; border-radius:6px; cursor:pointer; font-size:14px; }
+  .ranges button.on { background:#2f8a35; color:#fff; }
+  main { max-width:1200px; margin:0 auto; padding:20px; display:grid; gap:16px; }
+  .tiles { display:grid; grid-template-columns:repeat(auto-fill, minmax(160px, 1fr)); gap:12px; }
+  .tile { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px 14px; }
+  .tile .k { color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.05em; }
+  .tile .v { font-size:24px; font-weight:600; margin-top:4px; }
+  .tile .v small { font-size:13px; color:var(--muted); font-weight:400; }
+  .warn { color:var(--c2); } .bad { color:var(--c4); }
+  .charts { display:grid; grid-template-columns:repeat(auto-fill, minmax(360px, 1fr)); gap:16px; }
+  .chart { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px 14px; }
+  .chart h2 { font-size:14px; margin:0 0 8px; font-weight:600; display:flex; gap:12px; flex-wrap:wrap; }
+  .chart h2 span { font-weight:400; color:var(--muted); font-size:12px; display:inline-flex; align-items:center; gap:4px; }
+  .chart h2 i { width:10px; height:3px; display:inline-block; border-radius:2px; }
+  canvas { width:100%; height:180px; display:block; }
+  table { width:100%; border-collapse:collapse; font-size:14px; }
+  th, td { text-align:left; padding:7px 8px; border-bottom:1px solid var(--line); }
+  th { color:var(--muted); font-weight:500; font-size:12px; text-transform:uppercase; letter-spacing:.05em; }
+  td.n { text-align:right; font-variant-numeric:tabular-nums; } th.n { text-align:right; }
+  .bar { height:6px; background:var(--grid); border-radius:3px; overflow:hidden; min-width:60px; }
+  .bar b { display:block; height:100%; background:var(--brand); }
+  .note { color:var(--muted); font-size:13px; }
+</style>
+</head>
+<body>
+<header>
+  <img src="logo.svg" alt="">
+  <div><h1>System monitor</h1><div class="sub" id="sub">Loading...</div></div>
+  <div class="ranges" id="ranges">
+    <button data-s="3600" class="on">1 h</button><button data-s="21600">6 h</button><button data-s="43200">12 h</button>
+  </div>
+</header>
+<main>
+  <div class="tiles" id="tiles"></div>
+  <div class="charts">
+    <div class="chart"><h2>CPU <span><i style="background:var(--c1)"></i>use %</span></h2><canvas id="cpu"></canvas></div>
+    <div class="chart"><h2>Memory <span><i style="background:var(--c3)"></i>available MB</span><span><i style="background:var(--c2)"></i>used MB</span></h2><canvas id="mem"></canvas></div>
+    <div class="chart"><h2>Load <span><i style="background:var(--c5)"></i>1 min average</span></h2><canvas id="load"></canvas></div>
+    <div class="chart"><h2>Temperatures <span><i style="background:var(--c4)"></i>nozzle</span><span><i style="background:var(--c2)"></i>bed</span><span><i style="background:var(--c1)"></i>chip</span></h2><canvas id="temp"></canvas></div>
+  </div>
+  <div class="chart">
+    <h2>Top programs <span id="procinfo"></span></h2>
+    <table><thead><tr><th>Program</th><th class="n">Memory</th><th></th><th class="n">CPU</th><th class="n">PID</th></tr></thead><tbody id="procs"></tbody></table>
+    <p class="note">CPU is the share of one core over the last minute. On a Kobra the printer itself runs as gklib (motion), gkapi (network and cloud) and K3SysUi (screen).</p>
+  </div>
+</main>
+<script>
+let range = 3600, rows = [];
+const $ = id => document.getElementById(id);
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+function parse(text) {
+  const lines = text.trim().split('\n').slice(1);
+  return lines.map(l => {
+    const c = l.split(',');
+    const num = s => (s === '' || s === undefined) ? null : Number(s);
+    return { t: +c[0], cpu: num(c[1]), used: num(c[2]), avail: num(c[3]), total: num(c[4]),
+             load: num(c[5]), soc: num(c[6]), ext: num(c[7]), bed: num(c[8]), disk: num(c[9]) };
+  }).filter(r => r.t);
+}
+
+function draw(id, series, opts = {}) {
+  const cv = $(id), dpr = window.devicePixelRatio || 1;
+  const w = cv.clientWidth, h = cv.clientHeight;
+  cv.width = w * dpr; cv.height = h * dpr;
+  const g = cv.getContext('2d'); g.scale(dpr, dpr);
+  const L = 38, R = 8, T = 6, B = 20, pw = w - L - R, ph = h - T - B;
+  const end = rows.length ? rows[rows.length - 1].t : 0, start = end - range;
+  const pts = rows.filter(r => r.t >= start);
+  let max = opts.max ?? 0, min = opts.min ?? 0;
+  if (opts.max === undefined) for (const s of series) for (const r of pts) { const v = r[s.key]; if (v !== null && v > max) max = v; }
+  if (max <= min) max = min + 1;
+  max = niceMax(max);
+  g.font = '11px system-ui'; g.fillStyle = css('--muted'); g.strokeStyle = css('--grid'); g.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = T + ph - ph * i / 4, v = min + (max - min) * i / 4;
+    g.beginPath(); g.moveTo(L, y); g.lineTo(L + pw, y); g.stroke();
+    g.fillText(fmt(v), 2, y + 4);
+  }
+  for (let i = 0; i <= 4; i++) {
+    const x = L + pw * i / 4, ago = Math.round(range * (1 - i / 4) / 60);
+    g.fillText(i === 4 ? 'now' : (ago >= 60 ? (ago / 60).toFixed(ago % 60 ? 1 : 0) + ' h' : ago + ' min'), x - (i === 4 ? 18 : 12), h - 4);
+  }
+  for (const s of series) {
+    g.strokeStyle = css(s.color); g.lineWidth = 2; g.beginPath();
+    let open = false, prevT = 0;
+    for (const r of pts) {
+      const v = r[s.key];
+      if (v === null || (prevT && r.t - prevT > 60)) { open = false; }
+      if (v === null) { prevT = r.t; continue; }
+      const x = L + pw * (r.t - start) / range, y = T + ph - ph * (v - min) / (max - min);
+      open ? g.lineTo(x, y) : g.moveTo(x, y); open = true; prevT = r.t;
+    }
+    g.stroke();
+  }
+  if (!pts.length) { g.fillStyle = css('--muted'); g.fillText('Collecting data...', L + pw / 2 - 45, T + ph / 2); }
+}
+function niceMax(v) { const p = Math.pow(10, Math.floor(Math.log10(v))); for (const m of [1, 2, 2.5, 5, 10]) if (m * p >= v) return m * p; return v; }
+function fmt(v) { return v >= 100 ? Math.round(v) : v < 1 && v > 0 ? Math.round(v * 100) / 100 : Math.round(v * 10) / 10; }
+
+function tile(k, v, unit, cls = '') { return `<div class="tile"><div class="k">${k}</div><div class="v ${cls}">${v}<small> ${unit}</small></div></div>`; }
+
+function render() {
+  const r = rows[rows.length - 1];
+  if (r) {
+    const memPct = r.total ? Math.round(100 * r.avail / r.total) : 0;
+    $('tiles').innerHTML =
+      tile('CPU', r.cpu ?? '-', '%', r.cpu > 90 ? 'bad' : r.cpu > 70 ? 'warn' : '') +
+      tile('Free memory', r.avail ?? '-', `MB (${memPct} %)`, memPct < 10 ? 'bad' : memPct < 20 ? 'warn' : '') +
+      tile('Load', r.load ?? '-', '1 min', r.load > 3 ? 'bad' : r.load > 1.5 ? 'warn' : '') +
+      tile('Chip', r.soc ?? '-', '°C', r.soc > 85 ? 'bad' : r.soc > 75 ? 'warn' : '') +
+      tile('Nozzle / bed', `${r.ext ?? '-'} / ${r.bed ?? '-'}`, '°C') +
+      tile('Storage used', r.disk ?? '-', '%', r.disk > 95 ? 'bad' : r.disk > 85 ? 'warn' : '');
+    $('sub').textContent = `Updated ${new Date().toLocaleTimeString()} · ${rows.length} samples`;
+  }
+  draw('cpu', [{ key: 'cpu', color: '--c1' }], { max: 100 });
+  draw('mem', [{ key: 'avail', color: '--c3' }, { key: 'used', color: '--c2' }]);
+  draw('load', [{ key: 'load', color: '--c5' }]);
+  draw('temp', [{ key: 'ext', color: '--c4' }, { key: 'bed', color: '--c2' }, { key: 'soc', color: '--c1' }]);
+}
+
+async function refresh() {
+  try {
+    rows = parse(await (await fetch('data/metrics.csv', { cache: 'no-store' })).text());
+    render();
+  } catch (e) { $('sub').textContent = 'Waiting for the collector...'; }
+  try {
+    const p = await (await fetch('data/procs.json', { cache: 'no-store' })).json();
+    const max = Math.max(1, ...p.top.map(x => x.rss_kb));
+    $('procinfo').textContent = `${p.processes} running`;
+    $('procs').innerHTML = p.top.map(x => `<tr><td>${x.name.replace(/[<>&]/g, '')}</td><td class="n">${(x.rss_kb / 1024).toFixed(1)} MB</td>` +
+      `<td><div class="bar"><b style="width:${100 * x.rss_kb / max}%"></b></div></td><td class="n">${x.cpu.toFixed(1)} %</td><td class="n">${x.pid}</td></tr>`).join('');
+  } catch (e) {}
+}
+
+$('ranges').onclick = e => {
+  const b = e.target.closest('button'); if (!b) return;
+  range = +b.dataset.s;
+  for (const x of $('ranges').children) x.classList.toggle('on', x === b);
+  render();
+};
+window.addEventListener('resize', render);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });
+refresh();
+setInterval(() => { if (!document.hidden) refresh(); }, 10000);
+</script>
+</body>
+</html>

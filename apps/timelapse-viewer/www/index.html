@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Timelapses - Boomslang</title>
+<link rel="icon" href="logo.svg">
+<style>
+  :root { --bg:#0f1115; --card:#181b22; --line:#262b35; --ink:#e8eaed; --muted:#9aa3ae; --brand:#4fb548; --brand-dark:#2f8a35; --danger:#e5484d; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background:var(--bg); color:var(--ink); }
+  header { display:flex; align-items:center; gap:12px; padding:16px 20px; border-bottom:1px solid var(--line); position:sticky; top:0; background:rgba(15,17,21,.92); backdrop-filter:blur(6px); z-index:2; }
+  header img { width:40px; height:40px; }
+  header h1 { font-size:20px; margin:0; }
+  header .sub { color:var(--muted); font-size:13px; }
+  header button { margin-left:auto; }
+  main { max-width:1200px; margin:0 auto; padding:20px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:16px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden; display:flex; flex-direction:column; }
+  video { width:100%; aspect-ratio:16/9; background:#000; display:block; }
+  .meta { padding:12px 14px 4px; }
+  .name { font-weight:600; word-break:break-word; }
+  .info { color:var(--muted); font-size:13px; margin-top:4px; }
+  .actions { display:flex; gap:8px; padding:10px 14px 14px; margin-top:auto; }
+  button, .btn { appearance:none; border:1px solid var(--line); background:#20242d; color:var(--ink); padding:8px 14px; border-radius:8px; font-size:14px; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:6px; }
+  button:hover, .btn:hover { border-color:var(--brand); }
+  .primary { background:var(--brand-dark); border-color:var(--brand-dark); color:#fff; }
+  .danger { color:#ffb4b6; }
+  .danger:hover { border-color:var(--danger); }
+  .empty { text-align:center; color:var(--muted); padding:60px 20px; line-height:1.6; }
+  .empty img { width:96px; opacity:.8; }
+  .toast { position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:#20242d; border:1px solid var(--line); padding:10px 16px; border-radius:8px; display:none; }
+</style>
+</head>
+<body>
+<header>
+  <img src="logo.svg" alt="">
+  <div><h1>Timelapses</h1><div class="sub" id="summary">Loading...</div></div>
+  <button id="refresh" title="Reload the list">Refresh</button>
+</header>
+<main>
+  <div class="grid" id="grid"></div>
+  <div class="empty" id="empty" hidden>
+    <img src="logo.svg" alt=""><br>
+    No timelapse videos yet.<br>
+    Turn on <b>Timelapse</b> in the print settings on the printer screen or in the slicer,
+    and the video of each print will show up here when it finishes.
+  </div>
+</main>
+<div class="toast" id="toast"></div>
+<script>
+const grid = document.getElementById('grid');
+const empty = document.getElementById('empty');
+const summary = document.getElementById('summary');
+const toast = document.getElementById('toast');
+
+function size(bytes) {
+  const u = ['B', 'KB', 'MB', 'GB']; let i = 0;
+  while (bytes >= 1024 && i < u.length - 1) { bytes /= 1024; i++; }
+  return bytes.toFixed(i ? 1 : 0) + ' ' + u[i];
+}
+function when(t) {
+  if (t < 1e9) return 'Date unknown';
+  return new Date(t * 1000).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+}
+function say(text) {
+  toast.textContent = text; toast.style.display = 'block';
+  clearTimeout(say.t); say.t = setTimeout(() => toast.style.display = 'none', 2500);
+}
+
+async function load() {
+  summary.textContent = 'Loading...';
+  let data;
+  try {
+    data = await (await fetch('api/list.cgi', { cache: 'no-store' })).json();
+  } catch (e) {
+    summary.textContent = 'Could not read the video list';
+    return;
+  }
+  const videos = data.videos || [];
+  const total = videos.reduce((a, v) => a + v.size, 0);
+  summary.textContent = videos.length ? `${videos.length} video${videos.length > 1 ? 's' : ''}, ${size(total)}` : 'No videos';
+  empty.hidden = videos.length > 0;
+  grid.replaceChildren(...videos.map(v => card(v, data.allow_delete)));
+}
+
+function card(v, allowDelete) {
+  const url = 'videos/' + encodeURIComponent(v.name);
+  const el = document.createElement('div');
+  el.className = 'card';
+  const video = document.createElement('video');
+  video.controls = true; video.preload = 'metadata'; video.playsInline = true;
+  video.src = url + '#t=0.5';
+  const meta = document.createElement('div');
+  meta.className = 'meta';
+  const name = document.createElement('div');
+  name.className = 'name'; name.textContent = v.name.replace(/\.mp4$/i, '');
+  const info = document.createElement('div');
+  info.className = 'info'; info.textContent = `${when(v.mtime)} · ${size(v.size)}`;
+  meta.append(name, info);
+  const actions = document.createElement('div');
+  actions.className = 'actions';
+  const dl = document.createElement('a');
+  dl.className = 'btn primary'; dl.href = url; dl.download = v.name; dl.textContent = 'Download';
+  actions.append(dl);
+  if (navigator.share) {
+    const share = document.createElement('button');
+    share.textContent = 'Share';
+    share.onclick = () => navigator.share({ title: v.name, url: new URL(url, location.href).href }).catch(() => {});
+    actions.append(share);
+  }
+  if (allowDelete) {
+    const del = document.createElement('button');
+    del.className = 'danger'; del.textContent = 'Delete';
+    del.onclick = async () => {
+      if (!confirm(`Delete ${v.name}? This cannot be undone.`)) return;
+      const r = await fetch('api/delete.cgi', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: v.name }) });
+      const m = await r.json().catch(() => ({}));
+      say(m.message || (r.ok ? 'Deleted' : 'Could not delete'));
+      if (r.ok) load();
+    };
+    actions.append(del);
+  }
+  el.append(video, meta, actions);
+  return el;
+}
+
+document.getElementById('refresh').onclick = load;
+load();
+</script>
+</body>
+</html>

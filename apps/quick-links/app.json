@@ -1,0 +1,21 @@
+{
+    "$version": "1",
+
+    "name": "Quick links",
+    "description": "Puts QR codes for all of the printer's web pages in one place, so you never have to type an IP address on your phone again. Open this app's settings on the printer screen and scan the code for Mainsail, Fluidd, the Boomslang web portal, or the Timelapse viewer, System monitor and Boomslang Hop when they are installed. The links always use the printer's current IP address, even if your router gave it a new one; it is read again every time the app starts. Nothing keeps running in the background and it uses no memory.",
+    "version": "1.0.0",
+
+    "requirements": {
+        "cpu": 0,
+        "memory": 0
+    },
+
+    "properties": {
+        "mainsail": { "display": "Mainsail", "type": "qr" },
+        "fluidd": { "display": "Fluidd", "type": "qr" },
+        "portal": { "display": "Boomslang web portal", "type": "qr" },
+        "timelapse": { "display": "Timelapse viewer", "type": "qr" },
+        "monitor": { "display": "System monitor", "type": "qr" },
+        "game": { "display": "Boomslang Hop", "type": "qr" }
+    }
+}
