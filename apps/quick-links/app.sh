@@ -1,7 +1,7 @@
 #!/bin/sh
 . /useremain/rinkhals/.current/tools.sh
 
-APP_ROOT=$(dirname $(realpath $0))
+APP_ROOT=$(dirname "$(realpath "$0")")
 APP=quick-links
 MARKER=/tmp/rinkhals/$APP.started
 USER_APPS=/useremain/home/rinkhals/apps
@@ -42,9 +42,9 @@ start() {
     link mainsail "" 4409 Mainsail
     link fluidd "" 4408 Fluidd
     link portal "" 8090 "the web portal"
-    link timelapse timelapse-viewer $(app_port timelapse-viewer 8091) "Timelapse viewer"
-    link monitor system-monitor $(app_port system-monitor 8092) "System monitor"
-    link game boomslang-hop $(app_port boomslang-hop 8093) "Boomslang Hop"
+    link timelapse timelapse-viewer "$(app_port timelapse-viewer 8091)" "Timelapse viewer"
+    link monitor system-monitor "$(app_port system-monitor 8092)" "System monitor"
+    link game boomslang-hop "$(app_port boomslang-hop 8093)" "Boomslang Hop"
     touch $MARKER
 }
 

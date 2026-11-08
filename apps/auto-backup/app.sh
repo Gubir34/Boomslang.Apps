@@ -1,7 +1,7 @@
 #!/bin/sh
 . /useremain/rinkhals/.current/tools.sh
 
-APP_ROOT=$(dirname $(realpath $0))
+APP_ROOT=$(dirname "$(realpath "$0")")
 APP=auto-backup
 PID_FILE=/tmp/rinkhals/$APP.pid
 LOG_FILE=$RINKHALS_LOGS/app-$APP.log
