@@ -1,10 +1,10 @@
 blank_issues_enabled: false
 contact_links:
   - name: Rinkhals firmware bug (not an app issue)
-    url: https://github.com/rinkhals-community/Rinkhals/issues/new/choose
+    url: https://github.com/Gubir34/Boomslang/issues/new/choose
     about: If the problem is with Rinkhals itself (not a specific app), file it on the main repo.
   - name: Question or general discussion
-    url: https://github.com/rinkhals-community/Rinkhals/discussions
+    url: https://github.com/Gubir34/Boomslang/discussions
     about: Use Discussions for questions, ideas, and show-and-tell.
   - name: Documentation
     url: https://rinkhals-community.github.io/Rinkhals/

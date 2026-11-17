@@ -8,7 +8,7 @@ body:
     attributes:
       label: Before you file
       options:
-        - label: I searched [existing issues](https://github.com/rinkhals-community/Rinkhals.Apps/issues) and found no duplicate
+        - label: I searched [existing issues](https://github.com/Gubir34/Boomslang.Apps/issues) and found no duplicate
           required: true
 
   - type: dropdown

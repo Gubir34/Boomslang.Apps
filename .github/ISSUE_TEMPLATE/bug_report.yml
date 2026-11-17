@@ -8,9 +8,9 @@ body:
     attributes:
       label: Before you file
       options:
-        - label: I searched [existing issues](https://github.com/rinkhals-community/Rinkhals.Apps/issues) and found no duplicate
+        - label: I searched [existing issues](https://github.com/Gubir34/Boomslang.Apps/issues) and found no duplicate
           required: true
-        - label: This is a bug in an app, not in Rinkhals itself (firmware bugs go to the [main repo](https://github.com/rinkhals-community/Rinkhals/issues))
+        - label: This is a bug in an app, not in Rinkhals itself (firmware bugs go to the [main repo](https://github.com/Gubir34/Boomslang/issues))
           required: true
 
   - type: dropdown
